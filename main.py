@@ -167,7 +167,6 @@ def get_description(cluster, location):
     if ret:
         raise RuntimeError(outs)
     result = json.loads(outbuf.decode('utf-8'))
-    print (result)
     if result["osd_objectstore"] == 'filestore':
         x = [
             'jrn=%s' % ('hdd' if int(result["journal_rotational"]) else 'ssd'),
