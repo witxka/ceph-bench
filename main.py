@@ -89,7 +89,7 @@ def get_pool_size(cluster, pool):
             "format": "json",
             "var": "size",
         }),
-        '',
+        b'',
         0
     )
     if ret:
@@ -106,13 +106,13 @@ def get_osds(cluster, pool):
             "target": ["mgr", ""],
             "format": "json",
         }),
-        '',
+        b'',
         0
     )
     if ret:
         raise RuntimeError(outs)
     result = json.loads(outbuf.decode('utf-8'))
-    return {i['acting_primary'] for i in result}
+    return {i['acting_primary'] for i in result['pg_stats']}
 
 
 def get_osd_location(cluster, osd):
@@ -122,7 +122,7 @@ def get_osd_location(cluster, osd):
             "id": osd,
             "format": "json",
         }),
-        '',
+        b'',
         0
     )
     if ret:
@@ -142,7 +142,7 @@ def get_obj_acting_primary(cluster, pool, name):
             "pool": pool,
             "format": "json",
         }),
-        '',
+        b'',
         0
     )
     if ret:
@@ -161,13 +161,13 @@ def get_description(cluster, location):
             "id": osd,
             "format": "json",
         }),
-        '',
+        b'',
         0
     )
     if ret:
         raise RuntimeError(outs)
     result = json.loads(outbuf.decode('utf-8'))
-
+    print (result)
     if result["osd_objectstore"] == 'filestore':
         x = [
             'jrn=%s' % ('hdd' if int(result["journal_rotational"]) else 'ssd'),
@@ -175,8 +175,8 @@ def get_description(cluster, location):
         ]
     elif result["osd_objectstore"] == 'bluestore':
         x = [
-            'db=%s(%s)' % (result['bluefs_db_type'], result["bluefs_db_model"].rstrip()),
-            'dat=%s(%s)' % (result['bluestore_bdev_type'], result["bluestore_bdev_model"].rstrip()),
+            'db=%s(%s)' % (result['bluefs_db_type'], result["bluefs_db_type"].rstrip()),
+            'dat=%s(%s)' % (result['bluestore_bdev_type'], result["bluestore_bdev_type"].rstrip()),
         ]
     else:
         x = []
